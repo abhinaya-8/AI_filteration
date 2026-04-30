@@ -1,0 +1,215 @@
+{
+  "metadata": {
+    "description": "Knowledge Checker Progress Dataset",
+    "created": "2026-04-05",
+    "version": "1.0",
+    "purpose": "Track user XP, streaks, and weak areas for analytics and progress monitoring"
+  },
+  "users": {
+    "69cff515e00a456b4291dce1": {
+      "user_id": "69cff515e00a456b4291dce1",
+      "name": "d79@gmail.com",
+      "email": "231fa04d791@gmail.com",
+      "xp": 45,
+      "streak": 2,
+      "weakAreas": [
+        "DSA"
+      ],
+      "progress_history": [
+        {
+          "timestamp": "2026-04-05T07:52:34.741934",
+          "xp_delta": 10,
+          "new_streak": 0,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-05T07:52:50.654872",
+          "xp_delta": 15,
+          "new_streak": 1,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-05T07:52:59.970543",
+          "xp_delta": 20,
+          "new_streak": 2,
+          "weak_areas": [
+            "DSA"
+          ]
+        }
+      ],
+      "created_at": "2026-04-05T07:52:34.741908",
+      "last_updated": "2026-04-05T07:52:59.970569"
+    },
+    "69d12db3c9178a6c1dc3059d": {
+      "user_id": "69d12db3c9178a6c1dc3059d",
+      "name": "pranav",
+      "email": "pranavbandaru@gmail.com",
+      "xp": 110,
+      "streak": 4,
+      "weakAreas": [
+        "DSA"
+      ],
+      "progress_history": [
+        {
+          "timestamp": "2026-04-17T15:10:06.375283",
+          "xp_delta": 10,
+          "new_streak": 1,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:10:13.905855",
+          "xp_delta": 10,
+          "new_streak": 2,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:10:21.841132",
+          "xp_delta": 5,
+          "new_streak": 0,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:10:26.167352",
+          "xp_delta": 10,
+          "new_streak": 1,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:10:34.023982",
+          "xp_delta": 5,
+          "new_streak": 0,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:10:41.812924",
+          "xp_delta": 5,
+          "new_streak": 0,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:10:47.897287",
+          "xp_delta": 10,
+          "new_streak": 1,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:11:01.711918",
+          "xp_delta": 10,
+          "new_streak": 2,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:11:08.136686",
+          "xp_delta": 5,
+          "new_streak": 0,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:11:19.567154",
+          "xp_delta": 10,
+          "new_streak": 1,
+          "weak_areas": [
+            "DSA"
+          ]
+        },
+        {
+          "timestamp": "2026-04-17T15:16:50.478518",
+          "xp_delta": 10,
+          "new_streak": 2,
+          "weak_areas": [
+            "DSA"
+          ]
+        },
+        {
+          "timestamp": "2026-04-17T15:16:55.038540",
+          "xp_delta": 10,
+          "new_streak": 3,
+          "weak_areas": [
+            "DSA"
+          ]
+        },
+        {
+          "timestamp": "2026-04-17T15:16:59.255439",
+          "xp_delta": 10,
+          "new_streak": 4,
+          "weak_areas": [
+            "DSA"
+          ]
+        }
+      ],
+      "created_at": "2026-04-17T15:10:06.375249",
+      "last_updated": "2026-04-17T15:16:59.255466"
+    },
+    "69e24a6ae1c74949109633b1": {
+      "user_id": "69e24a6ae1c74949109633b1",
+      "name": "ravi",
+      "email": "ravi@gmail.com",
+      "xp": 30,
+      "streak": 3,
+      "weakAreas": [],
+      "progress_history": [
+        {
+          "timestamp": "2026-04-17T15:18:57.202867",
+          "xp_delta": 10,
+          "new_streak": 1,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:19:03.992688",
+          "xp_delta": 10,
+          "new_streak": 2,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-17T15:19:11.165305",
+          "xp_delta": 10,
+          "new_streak": 3,
+          "weak_areas": []
+        }
+      ],
+      "created_at": "2026-04-17T15:18:57.202814",
+      "last_updated": "2026-04-17T15:19:11.165361"
+    },
+    "69e316e4c36cff442a0f816b": {
+      "user_id": "69e316e4c36cff442a0f816b",
+      "name": "lmn",
+      "email": "lmn@gmail.com",
+      "xp": 20,
+      "totalCorrectQuestions": 2,
+      "weakAreas": [],
+      "progress_history": [
+        {
+          "timestamp": "2026-04-21T17:06:07.173243",
+          "xp_delta": 10,
+          "new_totalCorrectQuestions": 1,
+          "weak_areas": []
+        },
+        {
+          "timestamp": "2026-04-21T17:06:11.434830",
+          "xp_delta": 10,
+          "new_totalCorrectQuestions": 2,
+          "weak_areas": []
+        }
+      ],
+      "created_at": "2026-04-21T17:06:07.173198",
+      "last_updated": "2026-04-21T17:06:11.434882"
+    }
+  },
+  "global_stats": {
+    "total_users": 4,
+    "total_xp_earned": 205,
+    "average_xp_per_user": 51.25,
+    "most_common_weak_areas": [
+      [
+        "DSA",
+        2
+      ]
+    ],
+    "domain_completion_rates": {
+      "DSA": 0,
+      "DBMS": 0,
+      "OS": 0,
+      "Web Dev": 0
+    }
+  }
+}

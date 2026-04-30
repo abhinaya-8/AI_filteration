@@ -1,0 +1,19 @@
+# Backend
+backend/venv/
+backend/.env
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.idea/
+.vscode/
+*.pyc
+__pycache__/
+
+# OS
+.DS_Store
+Thumbs.db

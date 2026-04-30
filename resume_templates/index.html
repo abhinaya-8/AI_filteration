@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div>
+        <h1>Resume Generator</h1>
+        <p>Choose a template, fill in your details, and render a professional A4 resume.</p>
+      </div>
+    </header>
+
+    <div class="content-layout">
+      <section class="editor-panel">
+        <form id="resumeForm" autocomplete="off">
+          <div class="form-row">
+            <label for="fullName">Full Name</label>
+            <input id="fullName" name="fullName" placeholder="Enter your name" />
+          </div>
+          <div class="form-row">
+            <label for="headline">Role / Title</label>
+            <input id="headline" name="headline" placeholder="Enter your role" />
+          </div>
+
+          <div class="form-row">
+            <label for="summary">Profile Summary</label>
+            <textarea id="summary" name="summary" rows="4" placeholder="Brief summary of your experience"></textarea>
+          </div>
+
+          <fieldset>
+            <legend>Contact</legend>
+            <div class="form-row">
+              <label for="email">Email</label>
+              <input id="email" name="email" placeholder="hello@example.com" />
+            </div>
+            <div class="form-row">
+              <label for="phone">Phone</label>
+              <input id="phone" name="phone" placeholder="+1 234 567 890" />
+            </div>
+            <div class="form-row">
+              <label for="location">Location</label>
+              <input id="location" name="location" placeholder="City, Country" />
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Skills</legend>
+            <div class="form-row">
+              <label for="skills">Skills (comma separated)</label>
+              <input id="skills" name="skills" placeholder="Figma, CSS, Research" />
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Experience</legend>
+            <div class="form-row">
+              <label for="experienceTitle">Job Title</label>
+              <input id="experienceTitle" name="experienceTitle" placeholder="Senior UX Designer" />
+            </div>
+            <div class="form-row">
+              <label for="experienceEmployer">Employer / Dates</label>
+              <input id="experienceEmployer" name="experienceEmployer" placeholder="Example Corp • 2020 - 2024" />
+            </div>
+            <div class="form-row">
+              <label for="experienceDetails">Key Achievements</label>
+              <textarea id="experienceDetails" name="experienceDetails" rows="4" placeholder="List achievements separated by commas"></textarea>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Projects</legend>
+            <div class="form-row">
+              <label for="projectTitle">Project Title</label>
+              <input id="projectTitle" name="projectTitle" placeholder="Project name" />
+            </div>
+            <div class="form-row">
+              <label for="projectDetails">Project Description</label>
+              <textarea id="projectDetails" name="projectDetails" rows="3" placeholder="Brief project description"></textarea>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Education</legend>
+            <div class="form-row">
+              <label for="education">Degree & Institution</label>
+              <input id="education" name="education" placeholder="B.A. in Communication, University" />
+            </div>
+          </fieldset>
+
+          <div class="form-row">
+            <label for="languages">Languages</label>
+            <input id="languages" name="languages" placeholder="English, Spanish" />
+          </div>
+          <div class="form-row">
+            <label for="hobbies">Hobbies</label>
+            <input id="hobbies" name="hobbies" placeholder="Reading, Travel, Sports" />
+          </div>
+
+          <button type="button" id="renderBtn">Render Resume</button>
+          <button type="button" id="downloadBtn">Download PDF</button>
+        </form>
+      </section>
+
+      <section class="preview-panel">
+        <div class="preview-top">
+          <div>
+            <p class="preview-label">A4 Resume Preview</p>
+          </div>
+          <div class="template-buttons">
+            <button type="button" class="template-button active" data-template="template1">Template 1</button>
+            <button type="button" class="template-button" data-template="template2">Template 2</button>
+            <button type="button" class="template-button" data-template="template3">Template 3</button>
+            <button type="button" class="template-button" data-template="template4">Template 4</button>
+          </div>
+        </div>
+
+        <div class="preview-frame">
+          <article id="resume" class="resume-page template1">
+            <header class="resume-top">
+              <div>
+                <h1 id="previewName"></h1>
+                <p id="previewRole" class="preview-role"></p>
+              </div>
+              <div id="contactSection" class="contact-list">
+                <p id="previewEmail" class="contact-item"></p>
+                <p id="previewPhone" class="contact-item"></p>
+                <p id="previewLocation" class="contact-item"></p>
+              </div>
+            </header>
+
+            <section id="summarySection" class="resume-section">
+              <h2>Profile Summary</h2>
+              <p id="previewSummary"></p>
+            </section>
+
+            <section id="skillsSection" class="resume-section">
+              <h2>Skills</h2>
+              <ul id="previewSkills" class="bullet-list"></ul>
+            </section>
+
+            <section id="experienceSection" class="resume-section">
+              <h2>Experience</h2>
+              <div class="item-block">
+                <p id="previewExperienceTitle" class="item-title"></p>
+                <p id="previewExperienceEmployer" class="item-meta"></p>
+                <ul id="previewExperienceDetails" class="bullet-list"></ul>
+              </div>
+            </section>
+
+            <section id="projectsSection" class="resume-section">
+              <h2>Projects</h2>
+              <div class="item-block">
+                <p id="previewProjectTitle" class="item-title"></p>
+                <p id="previewProjectDetails" class="item-text"></p>
+              </div>
+            </section>
+
+            <section id="educationSection" class="resume-section">
+              <h2>Education</h2>
+              <p id="previewEducation" class="item-text"></p>
+            </section>
+
+            <div class="two-column-row">
+              <section id="languagesSection" class="resume-section small-section">
+                <h2>Languages</h2>
+                <p id="previewLanguages"></p>
+              </section>
+              <section id="hobbiesSection" class="resume-section small-section">
+                <h2>Hobbies</h2>
+                <p id="previewHobbies"></p>
+              </section>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
