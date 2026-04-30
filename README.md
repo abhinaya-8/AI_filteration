@@ -162,6 +162,34 @@ All except signup/login require header: `Authorization: Bearer <token>`.
 
 ---
 
+## Deployment
+
+Ready to go live? Follow the complete deployment guide:
+
+📖 **[Deployment Guide](./DEPLOYMENT.md)** – Production deployment to Render, Railway, Heroku, or self-hosted
+
+🚀 **[GitHub Setup Guide](./GITHUB_SETUP.md)** – Push code to GitHub and deploy
+
+**Quick Start:**
+1. Create GitHub repository
+2. Push code: `git push -u origin main`
+3. Deploy to Render/Railway (see [DEPLOYMENT.md](./DEPLOYMENT.md))
+4. Set environment variables in deployment platform
+5. Access live application
+
+---
+
+## License
+
+MIT License - Feel free to use, modify, and distribute.
+
+## Contact
+
+For questions or issues, create a GitHub issue or contact the development team.
+
+
+---
+
 ## ML Module (`backend/app/ml/resume_filter.py`)
 
 - **Text extraction:** PDF (PyPDF2), DOCX (python-docx).
