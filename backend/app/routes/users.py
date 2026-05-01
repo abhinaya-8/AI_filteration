@@ -7,6 +7,7 @@ from flask import Blueprint, jsonify, current_app, request
 from bson import ObjectId
 
 from app.utils.auth import token_required, admin_required
+from app.ml.deepseek_hint_generator import generate_hint, generate_concept_tag
 
 users_bp = Blueprint("users", __name__)
 
@@ -257,106 +258,84 @@ def export_knowledge_dataset(user_id):
 def hint_chat(user_id):
     """
     POST /api/users/hint-chat
-    Body: { question, level, userAttempt }
-    Returns AI-generated hint based on level (1, 2, or 3)
+    Body: { question, level, userAttempt, conversationHistory }
+    
+    Returns AI-generated hint using DeepSeek model (open-source, no API key needed)
+    
     Level 1: Very subtle conceptual hint
     Level 2: More specific guidance
     Level 3: Almost the answer (clear direction)
     """
     from datetime import datetime
-    import os
 
     data = request.get_json() or {}
     question = data.get("question", "").strip()
-    level = data.get("level", 1)
+    level = int(data.get("level", 1))
     user_attempt = data.get("userAttempt", "No attempt yet").strip()
-
+    conversation_history = data.get("conversationHistory", [])
+    
+    # Validate input
     if not question:
         return jsonify({"error": "Question is required"}), 400
-
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key or api_key == "your_gemini_api_key_here":
-        return jsonify({
-            "reply": "⚠️ **API Key Missing**\n\nTo enable the real-time AI Tutor, please add your Google Gemini API key (`GEMINI_API_KEY`) to the `backend/.env` file and restart the server.",
-            "timestamp": datetime.utcnow().isoformat(),
-            "concept": "System Setup"
-        })
+    
+    if level not in [1, 2, 3]:
+        level = 1
 
     try:
-        import google.generativeai as genai
-        genai.configure(api_key=api_key)
+        # Build message list for context (including conversation history)
+        messages = []
         
-        # Build prompt based on hint level
-        if level == 1:
-            prompt = f"""You are a helpful AI tutor. A student is asking about:
-
-Question: "{question}"
-
-Student's attempt: {user_attempt}
-
-Provide a LEVEL 1 HINT - Very subtle and conceptual. Do NOT give direct clues or mention any specifics. 
-- Just help them think about the concept
-- Ask a guiding question or provide a conceptual direction
-- Keep it to 2-3 lines max
-- Be conversational and encouraging
-- Examples: "Think about what the definition of X really means..." or "Have you considered the relationship between A and B?"
-
-Keep your response SHORT (2-4 lines max)."""
+        # Add conversation history if provided
+        if isinstance(conversation_history, list):
+            for msg in conversation_history:
+                if isinstance(msg, dict) and "role" in msg and "content" in msg:
+                    messages.append(msg)
         
-        elif level == 2:
-            prompt = f"""You are a helpful AI tutor. A student is asking about:
-
-Question: "{question}"
-
-Student's attempt: {user_attempt}
-
-Provide a LEVEL 2 HINT - More specific guidance. Narrow down their thinking without revealing the answer.
-- Guide them toward the right area/approach
-- Mention key concepts or areas to focus on
-- But DO NOT state the answer
-- Keep it to 3-4 lines max
-- Examples: "Look at the time complexity - specifically focus on how many times this operation runs..." or "Consider what happens when you move from position X to position Y..."
-
-Keep your response SHORT (3-4 lines max)."""
+        # Add current question
+        messages.append({
+            "role": "user",
+            "content": f"Question: {question}\n\nMy attempt: {user_attempt}"
+        })
         
-        else:  # level == 3
-            prompt = f"""You are a helpful AI tutor. A student is asking about:
-
-Question: "{question}"
-
-Student's attempt: {user_attempt}
-
-Provide a LEVEL 3 HINT - Clear direction, almost the answer, but NOT the final answer.
-- Be very specific about the approach or method
-- Narrow it down to 1-2 possible answers/directions
-- Give clear reasoning but stop just before stating the final answer
-- Examples: "The answer is in this category: X or Y. Think about which one applies when..." or "You need to apply the formula... but with this specific parameter..."
-
-Keep your response SHORT (3-4 lines max)."""
-
-        # Call Gemini model
-        model = genai.GenerativeModel("gemini-2.0-flash")
-        response = model.generate_content(prompt)
+        # Generate hint using DeepSeek
+        reply_text = generate_hint(
+            messages=messages,
+            level=level,
+            temperature=0.6,  # Lower temperature for more focused hints
+            max_tokens=200
+        )
         
-        reply_text = response.text
-
-        # Generate a short concept summary based on the question
-        concept = "Computer Science Fundamentals"
-        if "array" in question.lower() or "list" in question.lower() or "stack" in question.lower(): 
-            concept = "Data Structures"
-        elif "time complexity" in question.lower() or "o(" in question.lower(): 
-            concept = "Complexity Analysis"
-
+        # Generate concept tag
+        concept = generate_concept_tag(question)
+        
         return jsonify({
             "reply": reply_text,
             "timestamp": datetime.utcnow().isoformat(),
-            "concept": concept
+            "concept": concept,
+            "model": "DeepSeek-V4-Pro",
+            "level": level
         })
 
-    except Exception as e:
-        current_app.logger.error(f"Gemini API Error: {str(e)}")
+    except ValueError as ve:
+        current_app.logger.error(f"Input validation error: {str(ve)}")
         return jsonify({
-            "reply": f"Sorry, I encountered an error connecting to the AI service: {str(e)}",
+            "reply": f"Invalid input: {str(ve)}",
             "timestamp": datetime.utcnow().isoformat(),
             "concept": "Error"
-        })
+        }), 400
+    
+    except RuntimeError as re:
+        current_app.logger.error(f"DeepSeek model error: {str(re)}")
+        return jsonify({
+            "reply": f"⚠️ **AI Service Temporarily Unavailable**\n\nThe DeepSeek model is loading or experiencing issues. This typically happens on first use.\n\nError: {str(re)}",
+            "timestamp": datetime.utcnow().isoformat(),
+            "concept": "System"
+        }), 503
+    
+    except Exception as e:
+        current_app.logger.error(f"Unexpected error in hint generation: {type(e).__name__}: {str(e)}")
+        return jsonify({
+            "reply": f"Sorry, I encountered an error generating the hint: {str(e)}",
+            "timestamp": datetime.utcnow().isoformat(),
+            "concept": "Error"
+        }), 500
