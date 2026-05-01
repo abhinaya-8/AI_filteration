@@ -10,36 +10,42 @@ Features:
 - Temperature and max_tokens tuning
 - Error handling and validation
 - Hint-specific prompting (not full answers)
+- LAZY LOADING - Model loads only on first request
 """
 
-import torch
-from typing import List, Dict, Optional, Tuple
-from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+from typing import List, Dict, Tuple
 import logging
 
 logger = logging.getLogger(__name__)
 
 # Model configuration
 MODEL_NAME = "deepseek-ai/DeepSeek-V4-Pro"
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Global model and tokenizer cache (loaded on first use)
 _model = None
 _tokenizer = None
+_device = None
 
 
 def load_model_and_tokenizer():
     """
     Lazy load the DeepSeek model and tokenizer with 8-bit quantization for memory efficiency.
+    Imports torch/transformers ONLY when called (not at app startup).
     Caches them globally to avoid repeated downloads.
     
     Returns:
         Tuple[model, tokenizer]
     """
-    global _model, _tokenizer
+    global _model, _tokenizer, _device
     
     if _model is None or _tokenizer is None:
-        logger.info(f"Loading DeepSeek model: {MODEL_NAME}")
+        # Import heavy libraries ONLY when model is actually needed
+        import torch
+        from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+        
+        _device = "cuda" if torch.cuda.is_available() else "cpu"
+        
+        logger.info(f"Loading DeepSeek model: {MODEL_NAME} on device: {_device}")
         _tokenizer = AutoTokenizer.from_pretrained(
             MODEL_NAME,
             trust_remote_code=True,
@@ -58,7 +64,7 @@ def load_model_and_tokenizer():
             _model = AutoModelForCausalLM.from_pretrained(
                 MODEL_NAME,
                 quantization_config=bnb_config,
-                device_map="auto" if torch.cuda.is_available() else DEVICE,
+                device_map="auto" if torch.cuda.is_available() else _device,
                 trust_remote_code=True
             )
         except Exception as e:
@@ -67,12 +73,12 @@ def load_model_and_tokenizer():
             _model = AutoModelForCausalLM.from_pretrained(
                 MODEL_NAME,
                 torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-                device_map="auto" if torch.cuda.is_available() else DEVICE,
+                device_map="auto" if torch.cuda.is_available() else _device,
                 trust_remote_code=True
             )
         
         _model.eval()  # Set to evaluation mode
-        logger.info(f"Model loaded successfully on device: {DEVICE}")
+        logger.info(f"Model loaded successfully on device: {_device}")
     
     return _model, _tokenizer
 
@@ -167,6 +173,9 @@ def generate_hint(
         raise ValueError("Messages must be a list of dicts")
     
     try:
+        # Import torch here (lazy import - only when hint is actually requested)
+        import torch
+        
         # Load model and tokenizer
         model, tokenizer = load_model_and_tokenizer()
         
