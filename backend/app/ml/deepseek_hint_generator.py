@@ -14,7 +14,7 @@ Features:
 
 import torch
 from typing import List, Dict, Optional, Tuple
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 import logging
 
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ _tokenizer = None
 
 def load_model_and_tokenizer():
     """
-    Lazy load the DeepSeek model and tokenizer.
+    Lazy load the DeepSeek model and tokenizer with 8-bit quantization for memory efficiency.
     Caches them globally to avoid repeated downloads.
     
     Returns:
@@ -45,12 +45,32 @@ def load_model_and_tokenizer():
             trust_remote_code=True,
             use_auth_token=None  # No auth needed for public model
         )
-        _model = AutoModelForCausalLM.from_pretrained(
-            MODEL_NAME,
-            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-            device_map="auto" if torch.cuda.is_available() else DEVICE,
-            trust_remote_code=True
-        )
+        
+        # Use 8-bit quantization to reduce memory usage (especially for free tier)
+        try:
+            bnb_config = BitsAndBytesConfig(
+                load_in_8bit=True,
+                bnb_4bit_use_double_quant=False,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
+            )
+            
+            _model = AutoModelForCausalLM.from_pretrained(
+                MODEL_NAME,
+                quantization_config=bnb_config,
+                device_map="auto" if torch.cuda.is_available() else DEVICE,
+                trust_remote_code=True
+            )
+        except Exception as e:
+            logger.warning(f"8-bit quantization failed, loading with standard config: {str(e)}")
+            # Fallback to standard loading without quantization
+            _model = AutoModelForCausalLM.from_pretrained(
+                MODEL_NAME,
+                torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+                device_map="auto" if torch.cuda.is_available() else DEVICE,
+                trust_remote_code=True
+            )
+        
         _model.eval()  # Set to evaluation mode
         logger.info(f"Model loaded successfully on device: {DEVICE}")
     

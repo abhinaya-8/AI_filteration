@@ -34,7 +34,10 @@ seaborn>=0.12.0
 python-dotenv==1.0.0
 werkzeug==3.0.1
 
-# DeepSeek Model & Transformers
+# DeepSeek Model & Transformers (CPU-only optimized for free tier)
 transformers>=4.40.0
-torch>=2.0.0
+torch>=2.0.0,!=2.1.0 ; sys_platform != 'darwin'
 accelerate>=0.24.0
+
+# Quantization & Memory Optimization (8-bit inference to reduce memory)
+bitsandbytes>=0.41.0
